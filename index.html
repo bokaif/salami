@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>bKashify Salami</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>b<span>Kashify</span> Salami</h1>
+        <div class="steps">
+            <div class="step">
+                <h2>01</h2>
+                <p>Enter your bKash number</p>
+                <input type="text" id="number" placeholder="01xxxxxxxxx" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11);
+                if (!/^01\d{9}$/.test(this.value)) {
+                    this.setCustomValidity('Input must start with 01 and be 11 digits long.');
+                } else {
+                    this.setCustomValidity('');
+                }" maxlength="11">
+            </div>
+            <div class="step">
+                <h2>02</h2>
+                <p>Upload your photo (square)</p>
+                <label for="image" id="image-label">Click to select</label>
+                <input type="file" name="image" id="image" accept="image/*" onchange="handleFileSelect(event)">
+            </div>
+        </div>
+        <button id="generate" onclick="generate()">Generate</button>
+        <br><br>
+
+        <div id="story"></div>
+    </div>
+
+    <script>
+        let image;
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const base64String = event.target.result;
+                image = base64String;
+                document.getElementById("image-label").innerHTML = "";
+                document.getElementById("image-label").style.background = "url(" + image + ")";
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function svgToPng(svg, callback) {
+            const url = getSvgUrl(svg);
+            svgUrlToPng(url, (imgData) => {
+                callback(imgData);
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function getSvgUrl(svg) {
+            return URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+        }
+
+        function svgUrlToPng(svgUrl, callback) {
+            const svgImage = document.createElement('img');
+            document.body.appendChild(svgImage);
+            svgImage.onload = function () {
+                const canvas = document.createElement('canvas');
+                const canvasCtx = canvas.getContext('2d');
+                canvas.width = svgImage.width;
+                canvas.height = svgImage.height;
+                canvasCtx.drawImage(svgImage, 0, 0);
+                const imgData = canvas.toDataURL('image/png');
+                callback(imgData);
+                document.body.removeChild(svgImage); // Remove the temporary img element
+            };
+            svgImage.src = svgUrl;
+        }
+
+        function generate() {
+            let number = document.getElementById("number").value;
+            if (number == "" && image == null) {
+                alert("Please enter your bKash number and upload your photo");
+                return;
+            }
+            if (number == "") {
+                alert("Please enter your bKash number");
+                return;
+            }
+            if (image == null) {
+                alert("Please upload your photo");
+                return;
+            }
+
+            const svg = bkashify(number, image);
+
+            svgToPng(svg, (imgData) => {
+                const storyDiv = document.getElementById("story");
+                const existingImage = storyDiv.querySelector("img");
+
+                if (existingImage) {
+                    existingImage.src = imgData;
+                } else {
+                    const pngImage = document.createElement('img');
+                    pngImage.src = imgData;
+                    storyDiv.appendChild(pngImage);
+                }
+
+                // Download the PNG image
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = 'bkashify-salami.png';
+                link.click();
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>
