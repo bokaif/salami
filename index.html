@@ -1,65 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>bKashify Salami</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="script.js"></script>
+    <title>bKashify Salami</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Alertify -->
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+
     <meta property="og:title" content="bKashify Salami" />
-    <meta property="og:description" content="Generate your bKashified salami story" />
+    <meta property="og:description" content="Generate your bespoke Salami request card." />
     <meta property="og:image" content="https://bokaif.me/salami/og.png" />
 </head>
 
 <body>
-    <div class="container">
-        <div class="main">
-            <h1>b<span>Kashify</span> Salami</h1>
-            <div class="steps">
-                <div class="step">
-                    <h2>01</h2>
-                    <p>Enter your bKash number</p>
-                    <input type="text" id="number" placeholder="01xxxxxxxxx" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11);
-                if (!/^01\d{9}$/.test(this.value)) {
-                    this.setCustomValidity('Input must start with 01 and be 11 digits long.');
-                } else {
-                    this.setCustomValidity('');
-                }" maxlength="11">
-                </div>
-                <div class="step">
-                    <h2>02</h2>
-                    <p>Upload your photo (square)</p>
-                    <label for="image" id="image-label">Click to select</label>
-                    <input type="file" name="image" id="image" accept="image/*" onchange="handleFileSelect(event)">
-                </div>
-                <button id="generate" onclick="generate()">Generate</button>
+    <div class="site-wrapper">
+        <header class="marquee-container">
+            <div class="marquee">
+                <span>EID MUBARAK ✨ GIB SALAMI ✨ BKASH ME ✨ EID MUBARAK ✨ GIB SALAMI ✨ BKASH ME ✨ EID MUBARAK ✨ GIB
+                    SALAMI ✨ BKASH ME ✨</span>
+                <span>EID MUBARAK ✨ GIB SALAMI ✨ BKASH ME ✨ EID MUBARAK ✨ GIB SALAMI ✨ BKASH ME ✨ EID MUBARAK ✨ GIB
+                    SALAMI ✨ BKASH ME ✨</span>
             </div>
-        </div>
+        </header>
 
-        <div id="story">
-            <!-- <p id="story-text">Click "Generate" to get your bKashified salami story</p> -->
-            <img id="story-image" src="blank.png">
-            <button id="save">Save</button>
-        </div>
+        <main class="grid-layout">
+            <div class="left-column">
+                <section class="hero-section">
+                    <div class="badge">EID EDITION</div>
+                    <h1 class="hero-title">bKashify<br><span class="highlight">Salami.</span></h1>
+                    <p class="hero-subtitle">Stop hinting. Start asking. Generate your bespoke Salami request card and
+                        claim what's rightfully yours this Eid.</p>
+                </section>
+
+                <div class="card-brutalist generator-panel">
+                    <div class="step-group">
+                        <div class="step-header">
+                            <span class="step-number">01</span>
+                            <label for="number">Target Number</label>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="prefix">BKASH</span>
+                            <input type="text" id="number" placeholder="01X XXXX XXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11);
+                                if (!/^01\d{9}$/.test(this.value)) {
+                                    this.setCustomValidity('Must start with 01 and be 11 digits.');
+                                } else {
+                                    this.setCustomValidity('');
+                                }">
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <div class="step-header">
+                            <span class="step-number">02</span>
+                            <label>Visual Guilt Trip</label>
+                        </div>
+                        <div class="upload-zone" id="upload-zone">
+                            <input type="file" name="image" id="image" accept="image/*"
+                                onchange="handleFileSelect(event)">
+                            <div class="upload-content" id="image-label">
+                                <span class="upload-icon">📸</span>
+                                <div><strong>Click to upload</strong><br><small>(Square crop)</small></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="generate" class="btn-brutalist" onclick="generate()">Generate Card</button>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="card-brutalist result-panel" id="story">
+                    <div class="result-header">
+                        <h2>YOUR WEAPON</h2>
+                        <span class="status-dot"></span>
+                    </div>
+                    <div class="result-image-wrapper">
+                        <img id="story-image" src="blank.png" alt="Generated Salami Card">
+                    </div>
+                    <div class="result-actions">
+                        <button id="save" class="btn-brutalist secondary">DOWNLOAD</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>Made with 💖 (and a need for money) • <span id="easter-egg">gib me salami? 👉🏻👈🏻</span></p>
+        </footer>
     </div>
 
-    <footer>
-        <p>gib me salami? 👉🏻👈🏻</p>
-    </footer>
+    <!-- Original SVG Script -->
+    <script src="script.js"></script>
 
     <script>
         let image;
 
         function handleFileSelect(event) {
             const file = event.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
 
             reader.onload = function (event) {
                 const base64String = event.target.result;
                 image = base64String;
-                document.getElementById("image-label").innerHTML = "";
-                document.getElementById("image-label").style.background = "url(" + image + ")";
+
+                const label = document.getElementById("image-label");
+                label.innerHTML = "";
+                label.style.backgroundImage = "url(" + image + ")";
+                label.style.backgroundSize = "cover";
+                label.style.backgroundPosition = "center";
             };
 
             reader.readAsDataURL(file);
@@ -89,46 +149,51 @@
                 canvasCtx.drawImage(svgImage, 0, 0);
                 const imgData = canvas.toDataURL('image/png');
                 callback(imgData);
-                document.body.removeChild(svgImage); // Remove the temporary img element
+                document.body.removeChild(svgImage);
             };
             svgImage.src = svgUrl;
         }
 
         function generate() {
             let number = document.getElementById("number").value;
+
             if (number == "" && image == null) {
-                // alert("Please enter your bKash number and upload your photo");
-                alertify.warning('Fill all the fields to generate');
+                alertify.error('Fill all fields to generate');
                 return;
             }
             if (number == "") {
-                // alert("Please enter your bKash number");
-                alertify.warning('Please enter your bKash number');
+                alertify.error('Need target bKash number');
                 return;
             }
             if (image == null) {
-                // alert("Please upload your photo");
-                alertify.warning('Please upload your photo');
+                alertify.error('Your face is mandatory for guilt');
                 return;
             }
 
-            const svg = bkashify(number, image);
+            const generateBtn = document.getElementById("generate");
+            const originalText = generateBtn.innerText;
+            generateBtn.innerText = "GENERATING...";
+            generateBtn.style.pointerEvents = "none";
 
-            svgToPng(svg, (imgData) => {
-                const storyDiv = document.getElementById("story");
-                const storyImage = storyDiv.querySelector("#story-image");
-                storyImage.src = imgData;
-                // document.getElementById("story-text").innerHTML = "";
-            });
+            setTimeout(() => {
+                const svg = bkashify(number, image);
+                svgToPng(svg, (imgData) => {
+                    const storyImage = document.getElementById("story-image");
+                    storyImage.src = imgData;
 
-            document.getElementById("story").scrollIntoView({ behavior: "smooth" });
+                    alertify.success('Card Generated. Go extort!');
+                    document.getElementById("story").scrollIntoView({ behavior: "smooth", block: "start" });
+
+                    generateBtn.innerText = originalText;
+                    generateBtn.style.pointerEvents = "auto";
+                });
+            }, 50); // slight delay for UI thread
         }
-
 
         document.getElementById('save').addEventListener('click', function () {
             var imgSrc = document.getElementById('story-image').src;
             if (imgSrc.includes('blank.png')) {
-                alertify.warning('Please generate first');
+                alertify.error('Generate a card first, genius.');
                 return;
             }
             var a = document.createElement('a');
@@ -137,14 +202,12 @@
             a.click();
         });
 
-        document.querySelector('footer').addEventListener('click', function () {
-            alertify.warning('(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
+        document.getElementById('easter-egg').addEventListener('click', function () {
+            alertify.message('(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
             document.querySelector('#story-image').src = 'dumbestbeing.png';
-            document.getElementById("story").scrollIntoView({ behavior: "smooth" });
+            document.getElementById("story").scrollIntoView({ behavior: "smooth", block: "start" });
         });
-
     </script>
-
 </body>
 
 </html>
