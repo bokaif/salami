@@ -33,62 +33,53 @@
             </div>
         </header>
 
-        <main class="grid-layout">
-            <div class="left-column">
+        <main class="main-container">
+            <div class="column-left">
                 <section class="hero-section">
                     <div class="badge">EID EDITION</div>
                     <h1 class="hero-title">bKashify<br><span class="highlight">Salami.</span></h1>
-                    <p class="hero-subtitle">Stop hinting. Start asking. Generate your bespoke Salami request card and
-                        claim what's rightfully yours this Eid.</p>
+                    <p class="hero-subtitle">Stop hinting. Start asking. <br> Generate your bespoke story card.</p>
                 </section>
 
                 <div class="card-brutalist generator-panel">
-                    <div class="step-group">
-                        <div class="step-header">
-                            <span class="step-number">01</span>
-                            <label for="number">Target Number</label>
-                        </div>
+                    <div class="form-row">
+                        <label class="block-label">01 // TARGET NUMBER</label>
                         <div class="input-wrapper">
                             <span class="prefix">BKASH</span>
-                            <input type="text" id="number" placeholder="01X XXXX XXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11);
-                                if (!/^01\d{9}$/.test(this.value)) {
-                                    this.setCustomValidity('Must start with 01 and be 11 digits.');
-                                } else {
-                                    this.setCustomValidity('');
-                                }">
+                            <input type="text" id="number" placeholder="01XXXXXXXXX" maxlength="11"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11);">
                         </div>
                     </div>
 
-                    <div class="step-group">
-                        <div class="step-header">
-                            <span class="step-number">02</span>
-                            <label>Visual Guilt Trip</label>
-                        </div>
+                    <div class="form-row">
+                        <label class="block-label">02 // UPLOAD FACE</label>
                         <div class="upload-zone" id="upload-zone">
-                            <input type="file" name="image" id="image" accept="image/*"
-                                onchange="handleFileSelect(event)">
+                            <input type="file" id="image" accept="image/*" onchange="handleFileSelect(event)">
                             <div class="upload-content" id="image-label">
                                 <span class="upload-icon">📸</span>
-                                <div><strong>Click to upload</strong><br><small>(Square crop)</small></div>
+                                <strong>CLICK HERE</strong>
                             </div>
                         </div>
                     </div>
 
-                    <button id="generate" class="btn-brutalist" onclick="generate()">Generate Card</button>
+                    <button id="generate" class="btn-brutalist action-generate" onclick="generate()">GENERATE</button>
+                    <div class="disclaimer-text">Prepare for extortion.</div>
                 </div>
             </div>
 
-            <div class="right-column">
+            <div class="column-right">
                 <div class="card-brutalist result-panel" id="story">
                     <div class="result-header">
                         <h2>YOUR WEAPON</h2>
                         <span class="status-dot"></span>
                     </div>
                     <div class="result-image-wrapper">
-                        <img id="story-image" src="blank.png" alt="Generated Salami Card">
+                        <div class="placeholder-text" id="placeholder-text">Click "Generate Card" to forge your weapon.
+                        </div>
+                        <img id="story-image" src="blank.png" alt="Generated Salami Card" style="opacity: 0;">
                     </div>
                     <div class="result-actions">
-                        <button id="save" class="btn-brutalist secondary">DOWNLOAD</button>
+                        <button id="save" class="btn-brutalist btn-secondary">DOWNLOAD</button>
                     </div>
                 </div>
             </div>
@@ -99,18 +90,14 @@
         </footer>
     </div>
 
-    <!-- Original SVG Script -->
     <script src="script.js"></script>
-
     <script>
         let image;
 
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
-
             reader.onload = function (event) {
                 const base64String = event.target.result;
                 image = base64String;
@@ -121,7 +108,6 @@
                 label.style.backgroundSize = "cover";
                 label.style.backgroundPosition = "center";
             };
-
             reader.readAsDataURL(file);
         }
 
@@ -156,7 +142,6 @@
 
         function generate() {
             let number = document.getElementById("number").value;
-
             if (number == "" && image == null) {
                 alertify.error('Fill all fields to generate');
                 return;
@@ -179,15 +164,21 @@
                 const svg = bkashify(number, image);
                 svgToPng(svg, (imgData) => {
                     const storyImage = document.getElementById("story-image");
+                    const placeholder = document.getElementById("placeholder-text");
+
                     storyImage.src = imgData;
+                    storyImage.style.opacity = "1";
+                    if (placeholder) placeholder.style.display = "none";
 
                     alertify.success('Card Generated. Go extort!');
-                    document.getElementById("story").scrollIntoView({ behavior: "smooth", block: "start" });
 
+                    if (window.innerWidth <= 900) {
+                        document.getElementById("story").scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
                     generateBtn.innerText = originalText;
                     generateBtn.style.pointerEvents = "auto";
                 });
-            }, 50); // slight delay for UI thread
+            }, 50);
         }
 
         document.getElementById('save').addEventListener('click', function () {
@@ -198,14 +189,22 @@
             }
             var a = document.createElement('a');
             a.href = imgSrc;
-            a.download = 'salami.png';
+            a.download = 'bsalami-' + Date.now() + '.png';
             a.click();
         });
 
         document.getElementById('easter-egg').addEventListener('click', function () {
             alertify.message('(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
-            document.querySelector('#story-image').src = 'dumbestbeing.png';
-            document.getElementById("story").scrollIntoView({ behavior: "smooth", block: "start" });
+            const storyImage = document.querySelector('#story-image');
+            const placeholder = document.getElementById("placeholder-text");
+
+            storyImage.src = 'dumbestbeing.png';
+            storyImage.style.opacity = "1";
+            if (placeholder) placeholder.style.display = "none";
+
+            if (window.innerWidth <= 900) {
+                document.getElementById("story").scrollIntoView({ behavior: "smooth", block: "start" });
+            }
         });
     </script>
 </body>
