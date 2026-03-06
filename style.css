@@ -1,10 +1,8 @@
 :root {
     --bg-color: #f4f0ec;
     --primary: #E2136E;
-    /* bKash pink */
     --primary-hover: #c90f61;
     --secondary: #FFC107;
-    /* alert yellow */
     --secondary-hover: #e5ac00;
     --black: #111111;
     --border-width: 3px;
@@ -27,8 +25,8 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     background-image:
-        linear-gradient(rgba(17, 17, 17, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(17, 17, 17, 0.1) 1px, transparent 1px);
+        linear-gradient(rgba(17, 17, 17, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17, 17, 17, 0.08) 1px, transparent 1px);
     background-size: 40px 40px;
     background-position: -1px -1px;
 }
@@ -40,16 +38,17 @@ body {
     flex-direction: column;
 }
 
-/* Marquee */
+/* ── Marquee ─────────────────────────────────────────── */
 .marquee-container {
     background: var(--primary);
     color: white;
     border-bottom: var(--border-width) solid var(--black);
-    padding: 12px 0;
+    padding: 10px 0;
     overflow: hidden;
     white-space: nowrap;
     position: relative;
     z-index: 10;
+    user-select: none;
 }
 
 .marquee {
@@ -57,12 +56,18 @@ body {
     animation: marquee 30s linear infinite;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;
     letter-spacing: 1px;
 }
 
 .marquee span {
-    padding-right: 50px;
+    padding-right: 40px;
+}
+
+.marquee-icon {
+    font-size: 0.9rem;
+    vertical-align: -2px;
+    margin: 0 6px;
 }
 
 @keyframes marquee {
@@ -75,51 +80,38 @@ body {
     }
 }
 
-/* Main Layout */
+/* ── Main Layout ─────────────────────────────────────── */
 .main-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 480px));
     justify-content: center;
     gap: clamp(40px, 6vw, 100px);
     padding: clamp(40px, 6vw, 80px) 20px;
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
-    flex: 1;
-    align-items: center;
+    /* Columns stretch to match each other — sized by content, not viewport */
+    align-items: stretch;
 }
 
 .column-left {
-    flex: 1 1 440px;
-    max-width: 480px;
-    /* Matched width with right column for perfect symmetry */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    /* Vertically center content */
     gap: 40px;
 }
 
 .column-right {
-    flex: 1 1 440px;
-    max-width: 480px;
-    /* Matched width for perfect symmetry */
     position: sticky;
     top: 40px;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (max-width: 900px) {
     .main-container {
+        grid-template-columns: 1fr;
         padding: 30px 20px;
         gap: 50px;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .column-left,
-    .column-right {
-        max-width: 100%;
-        width: 100%;
     }
 
     .column-right {
@@ -128,7 +120,7 @@ body {
     }
 }
 
-/* Hero Section */
+/* ── Hero ────────────────────────────────────────────── */
 .hero-section {
     display: flex;
     flex-direction: column;
@@ -142,11 +134,12 @@ body {
     padding: 6px 16px;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     box-shadow: 4px 4px 0px var(--black);
     margin-bottom: 24px;
     transform: rotate(-3deg);
+    display: inline-block;
 }
 
 .hero-title {
@@ -164,13 +157,14 @@ body {
 }
 
 .hero-subtitle {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     max-width: 90%;
     line-height: 1.5;
     font-weight: 400;
+    color: #444;
 }
 
-/* Brutalist Cards */
+/* ── Brutalist Cards ──────────────────────────────────── */
 .card-brutalist {
     background: white;
     border: var(--border-width) solid var(--black);
@@ -180,17 +174,25 @@ body {
     z-index: 5;
 }
 
-/* Form Layout inside brutalist panel */
+/* Generator card grows to fill leftover column height so bottoms align */
+.generator-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ── Form rows ────────────────────────────────────────── */
 .form-row {
-    margin-bottom: 25px;
+    margin-bottom: 24px;
 }
 
 .block-label {
     display: block;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.1rem;
-    margin-bottom: 12px;
+    font-size: 1rem;
+    margin-bottom: 10px;
     letter-spacing: 0.5px;
     color: var(--black);
 }
@@ -198,7 +200,7 @@ body {
 .input-wrapper {
     display: flex;
     border: var(--border-width) solid var(--black);
-    height: 60px;
+    height: 58px;
     box-shadow: 4px 4px 0px var(--black);
     background: white;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -214,18 +216,37 @@ body {
     color: white;
     font-family: var(--font-display);
     font-weight: 800;
-    padding: 0 15px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
+    gap: 6px;
     border-right: var(--border-width) solid var(--black);
-    font-size: 1rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.bkash-logo {
+    width: 30px;
+    height: 30px;
+    display: block;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.prefix-wordmark {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+    line-height: 1;
 }
 
 .input-wrapper input {
     flex: 1;
     border: none;
     font-family: var(--font-body);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     padding: 0 15px;
     outline: none;
     background: transparent;
@@ -236,78 +257,104 @@ body {
 }
 
 .input-wrapper input::placeholder {
-    color: #a0a0a0;
+    color: #bbb;
+    font-weight: 400;
 }
 
+/* ── Upload Zone ──────────────────────────────────────── */
 .upload-zone {
     border: var(--border-width) dashed var(--black);
-    height: 140px;
-    /* Fixed rectangle rather than huge square */
+    height: 150px;
     width: 100%;
     position: relative;
     cursor: pointer;
     background: #fdfdfd;
     transition: all 0.2s ease;
-    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
 }
 
 .upload-zone:hover {
-    background: #f9f9f9;
+    background: #f5f5f5;
     border-style: solid;
     box-shadow: 4px 4px 0px var(--black);
 }
 
-.upload-zone input[type="file"] {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 10;
+/* Preview state — when image-label has background-image set */
+.upload-zone:has(#image-label[style*="background-image"]) {
+    border-style: solid;
 }
 
 .upload-content {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     z-index: 5;
     text-align: center;
+    padding: 12px;
+    background-size: cover;
+    background-position: center;
 }
 
 .upload-content strong {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 0.95rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.upload-icon {
-    font-size: 2rem;
+.upload-hint {
+    font-size: 0.78rem;
+    color: #888;
+    font-family: var(--font-body);
+}
+
+.upload-icon-svg {
+    font-size: 2.2rem;
+    color: var(--primary);
+    display: block;
+}
+
+/* Edit overlay on preview */
+.upload-change-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: var(--black);
+    color: white;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    border-radius: 0;
+    border: 2px solid var(--primary);
+    z-index: 10;
+    cursor: pointer;
 }
 
 .disclaimer-text {
-    margin-top: 15px;
-    font-size: 0.85rem;
+    margin-top: 14px;
+    font-size: 0.78rem;
     text-align: center;
-    font-weight: 600;
-    color: #666;
+    color: #777;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* Buttons */
+/* ── Buttons ──────────────────────────────────────────── */
 .btn-brutalist {
     width: 100%;
-    height: 70px;
+    height: 66px;
     border: var(--border-width) solid var(--black);
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     text-transform: uppercase;
     cursor: pointer;
     box-shadow: 6px 6px 0px var(--black);
@@ -315,6 +362,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    letter-spacing: 0.5px;
 }
 
 .btn-brutalist.action-generate {
@@ -337,7 +385,7 @@ body {
 .btn-brutalist.btn-secondary {
     background: var(--secondary);
     color: var(--black);
-    height: 60px;
+    height: 58px;
 }
 
 .btn-brutalist.btn-secondary:hover {
@@ -351,14 +399,7 @@ body {
     box-shadow: 2px 2px 0px var(--black);
 }
 
-.disclaimer-text {
-    margin-top: 15px;
-    font-size: 0.8rem;
-    text-align: center;
-    color: #555;
-}
-
-/* Result Panel Specific */
+/* ── Result Panel ─────────────────────────────────────── */
 .result-panel {
     background: #eef2f5;
     display: flex;
@@ -371,20 +412,20 @@ body {
     align-items: center;
     margin-bottom: 20px;
     border-bottom: var(--border-width) solid var(--black);
-    padding-bottom: 15px;
+    padding-bottom: 14px;
 }
 
 .result-header h2 {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
 }
 
 .status-dot {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     background: #00e676;
-    /* success green */
     border: 2px solid var(--black);
     border-radius: 50%;
     animation: pulse 2s infinite;
@@ -398,35 +439,38 @@ body {
     }
 
     50% {
-        opacity: 0.4;
+        opacity: 0.35;
     }
 }
 
 .result-image-wrapper {
     background: white;
     border: var(--border-width) solid var(--black);
-    margin-bottom: 25px;
-    box-shadow: 4px 4px 0px inset rgba(0, 0, 0, 0.05);
+    margin-bottom: 22px;
     position: relative;
-    /* PREDICT HEIGHT: This creates a bounding box for the mobile screenshot */
     aspect-ratio: 9 / 16;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background-image: radial-gradient(rgba(17, 17, 17, 0.1) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(17, 17, 17, 0.07) 1px, transparent 1px);
     background-size: 10px 10px;
 }
 
 .placeholder-text {
     font-family: var(--font-body);
     color: #888;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-align: center;
     padding: 20px;
     position: absolute;
     font-weight: bold;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #story-image {
@@ -436,13 +480,13 @@ body {
     display: block;
     position: relative;
     z-index: 2;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
 }
 
-/* Footer */
+/* ── Footer ───────────────────────────────────────────── */
 .site-footer {
     text-align: center;
-    padding: 35px 20px;
+    padding: 30px 20px;
     border-top: var(--border-width) solid var(--black);
     background: white;
     font-weight: 700;
@@ -450,6 +494,7 @@ body {
     z-index: 10;
     font-family: var(--font-display);
     margin-top: auto;
+    font-size: 0.95rem;
 }
 
 #easter-egg {
@@ -463,7 +508,7 @@ body {
     color: var(--black);
 }
 
-/* Alertify Customization */
+/* ── Alertify Overrides ───────────────────────────────── */
 .ajs-message.ajs-success {
     background: var(--primary) !important;
     color: white !important;
@@ -473,7 +518,7 @@ body {
     box-shadow: 6px 6px 0px var(--black) !important;
     border-radius: 0 !important;
     text-shadow: none !important;
-    padding: 15px 25px !important;
+    padding: 14px 22px !important;
 }
 
 .ajs-message.ajs-error {
@@ -485,7 +530,7 @@ body {
     box-shadow: 6px 6px 0px var(--primary) !important;
     border-radius: 0 !important;
     text-shadow: none !important;
-    padding: 15px 25px !important;
+    padding: 14px 22px !important;
 }
 
 .ajs-message {
@@ -496,5 +541,321 @@ body {
     border: var(--border-width) solid var(--black) !important;
     box-shadow: 6px 6px 0px var(--secondary) !important;
     border-radius: 0 !important;
-    padding: 15px 25px !important;
+    padding: 14px 22px !important;
+}
+
+/* ── Loading spin ────────────────────────────────────── */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CROP MODAL
+═══════════════════════════════════════════════════════ */
+
+.crop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 17, 17, 0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+
+.crop-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.crop-modal {
+    background: white;
+    border: var(--border-width) solid var(--black);
+    box-shadow: 12px 12px 0px var(--black);
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 28px;
+    /* Slide up animation */
+    transform: translateY(20px);
+    transition: transform 0.2s ease;
+}
+
+.crop-overlay.active .crop-modal {
+    transform: translateY(0);
+}
+
+.crop-modal-header h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.crop-modal-subtitle {
+    font-size: 0.78rem;
+    color: #777;
+    margin-top: 4px;
+    font-family: var(--font-body);
+}
+
+/* ── Crop Viewport ────────────────────────────────────── */
+.crop-viewport-wrapper {
+    /* Keeps it square at all widths */
+    width: 100%;
+    aspect-ratio: 1;
+    position: relative;
+}
+
+.crop-viewport {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border: var(--border-width) solid var(--black);
+    box-shadow: 4px 4px 0px var(--black);
+    background: #e8e8e8;
+    cursor: grab;
+}
+
+.crop-viewport:active {
+    cursor: grabbing;
+}
+
+#crop-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    touch-action: none;
+}
+
+/* ── Rule-of-thirds grid ─────────────────────────────── */
+.crop-frame {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.crop-grid {
+    position: absolute;
+    inset: 0;
+}
+
+.grid-line {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.grid-line.h1 {
+    height: 1px;
+    width: 100%;
+    top: 33.33%;
+}
+
+.grid-line.h2 {
+    height: 1px;
+    width: 100%;
+    top: 66.66%;
+}
+
+.grid-line.v1 {
+    width: 1px;
+    height: 100%;
+    left: 33.33%;
+}
+
+.grid-line.v2 {
+    width: 1px;
+    height: 100%;
+    left: 66.66%;
+}
+
+/* Corner handles */
+.crop-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: white;
+    border-style: solid;
+    border-width: 0;
+}
+
+.crop-corner.tl {
+    top: 0;
+    left: 0;
+    border-top-width: 3px;
+    border-left-width: 3px;
+}
+
+.crop-corner.tr {
+    top: 0;
+    right: 0;
+    border-top-width: 3px;
+    border-right-width: 3px;
+}
+
+.crop-corner.bl {
+    bottom: 0;
+    left: 0;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+}
+
+.crop-corner.br {
+    bottom: 0;
+    right: 0;
+    border-bottom-width: 3px;
+    border-right-width: 3px;
+}
+
+/* ── Zoom Control ─────────────────────────────────────── */
+.crop-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.zoom-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    background: #f6f3f0;
+    border: 2px solid var(--black);
+    padding: 8px 12px;
+}
+
+.zoom-icon {
+    font-size: 1.1rem;
+    color: #555;
+    flex-shrink: 0;
+}
+
+.zoom-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--black);
+    outline: none;
+    cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--primary);
+    border: 2px solid var(--black);
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.zoom-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--primary);
+    border: 2px solid var(--black);
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.zoom-value {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 700;
+    min-width: 36px;
+    text-align: right;
+    color: var(--black);
+}
+
+.btn-crop-reset {
+    background: white;
+    border: 2px solid var(--black);
+    box-shadow: 3px 3px 0px var(--black);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0 14px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-transform: uppercase;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    flex-shrink: 0;
+}
+
+.btn-crop-reset:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px var(--black);
+}
+
+.btn-crop-reset:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px var(--black);
+}
+
+/* ── Crop Action Buttons ──────────────────────────────── */
+.crop-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-crop-cancel {
+    background: white;
+    color: var(--black);
+    flex: 1;
+    height: 54px;
+    font-size: 1rem;
+    margin-top: 0;
+}
+
+.btn-crop-cancel:hover {
+    background: #f0f0f0;
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px var(--black);
+}
+
+.btn-crop-cancel:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0px var(--black);
+}
+
+.btn-crop-confirm {
+    flex: 2;
+    height: 54px;
+    font-size: 1rem;
+    margin-top: 0;
+}
+
+/* ── Mobile crop modal ───────────────────────────────── */
+@media (max-width: 520px) {
+    .crop-modal {
+        padding: 20px;
+        gap: 16px;
+    }
+
+    .crop-actions {
+        flex-direction: column;
+    }
+
+    .btn-crop-cancel,
+    .btn-crop-confirm {
+        width: 100%;
+        flex: unset;
+    }
 }
