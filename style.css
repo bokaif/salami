@@ -38,47 +38,7 @@ body {
     flex-direction: column;
 }
 
-/* ── Marquee ─────────────────────────────────────────── */
-.marquee-container {
-    background: var(--primary);
-    color: white;
-    border-bottom: var(--border-width) solid var(--black);
-    padding: 10px 0;
-    overflow: hidden;
-    white-space: nowrap;
-    position: relative;
-    z-index: 10;
-    user-select: none;
-}
 
-.marquee {
-    display: inline-block;
-    animation: marquee 30s linear infinite;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 1px;
-}
-
-.marquee span {
-    padding-right: 40px;
-}
-
-.marquee-icon {
-    font-size: 0.9rem;
-    vertical-align: -2px;
-    margin: 0 6px;
-}
-
-@keyframes marquee {
-    from {
-        transform: translateX(0);
-    }
-
-    to {
-        transform: translateX(-50%);
-    }
-}
 
 /* ── Main Layout ─────────────────────────────────────── */
 .main-container {
@@ -118,9 +78,15 @@ body {
         position: relative;
         top: 0;
     }
+
+    .column-right.mobile-hidden {
+        display: none !important;
+    }
 }
 
 /* ── Hero ────────────────────────────────────────────── */
+
+
 .hero-section {
     display: flex;
     flex-direction: column;
@@ -153,11 +119,11 @@ body {
 
 .hero-title .highlight {
     color: var(--primary);
-    text-shadow: 3px 3px 0px var(--black);
+    text-shadow: 0.05em 0.05em 0px var(--black);
 }
 
 .hero-subtitle {
-    font-size: 1.1rem;
+    font-size: clamp(0.85rem, 3vw, 1.1rem);
     max-width: 90%;
     line-height: 1.5;
     font-weight: 400;
@@ -249,12 +215,12 @@ body {
     font-size: 1.2rem;
     padding: 0 15px;
     outline: none;
+    width: 100%;
     background: transparent;
     color: var(--black);
     font-weight: 700;
-    letter-spacing: 2px;
-    width: 100%;
 }
+
 
 .input-wrapper input::placeholder {
     color: #bbb;
@@ -264,7 +230,7 @@ body {
 /* ── Upload Zone ──────────────────────────────────────── */
 .upload-zone {
     border: var(--border-width) dashed var(--black);
-    height: 150px;
+    height: 200px;
     width: 100%;
     position: relative;
     cursor: pointer;
@@ -487,8 +453,7 @@ body {
 .site-footer {
     text-align: center;
     padding: 30px 20px;
-    border-top: var(--border-width) solid var(--black);
-    background: white;
+    background: transparent;
     font-weight: 700;
     position: relative;
     z-index: 10;
@@ -497,15 +462,67 @@ body {
     font-size: 0.95rem;
 }
 
+.footer-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.footer-link {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 2px 10px;
+    border: 2px solid var(--black);
+    text-decoration: none;
+    font-weight: 800;
+    box-shadow: 3px 3px 0px var(--black);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transform: rotate(-2deg);
+}
+
+.footer-link:hover {
+    color: white;
+    transform: rotate(1deg) translate(-2px, -2px);
+    box-shadow: 5px 5px 0px var(--black);
+}
+
+.footer-link:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px var(--black);
+}
+
+.footer-divider {
+    color: var(--black);
+    opacity: 0.3;
+    font-weight: 400;
+    user-select: none;
+}
+
 #easter-egg {
     cursor: pointer;
-    border-bottom: 2px dashed var(--primary);
     color: var(--primary);
-    transition: color 0.2s ease;
+    border-bottom: 2px dashed var(--primary);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+#easter-egg iconify-icon {
+    transition: transform 0.2s ease;
 }
 
 #easter-egg:hover {
     color: var(--black);
+    border-bottom-color: var(--black);
+    border-bottom-style: solid;
+}
+
+#easter-egg:hover iconify-icon {
+    transform: scale(1.15) translateY(-2px) rotate(10deg);
 }
 
 /* ── Alertify Overrides ───────────────────────────────── */
@@ -836,10 +853,10 @@ body {
 }
 
 .btn-crop-confirm {
-    flex: 2;
+    flex: 1;
     height: 54px;
     font-size: 1rem;
-    margin-top: 0;
+    margin-top: 0 !important;
 }
 
 /* ── Mobile crop modal ───────────────────────────────── */

@@ -1,5 +1,6 @@
-function bkashify(number, image) {
-	let svg = `<?xml version="1.0" encoding="utf-8"?>
+function bkashify(number, image, vibeFilter) {
+  let svg =
+    `<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 27.9.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 1080 1920" width="1080" height="1920" style="enable-background:new 0 0 1080 1920;" xml:space="preserve">
@@ -313,7 +314,9 @@ function bkashify(number, image) {
 	<g style="clip-path:url(#SVGID_00000081624218962753939920000011583036221603482813_);">
 		<path class="st8" d="M834.9,1180.4H233.1c-25.5,0-46.1-20.7-46.1-46.1v-63.1c0-25.5,20.7-46.1,46.1-46.1h601.7
 			c25.5,0,46.1,20.7,46.1,46.1v63.1C881,1159.7,860.3,1180.4,834.9,1180.4z"/>
-		<text id="bkash_x5F_number" transform="matrix(1 0 0 1 0 1133.5273)" x="50%" text-anchor="middle" class="st9 st10 st11">` + number + `</text>
+		<text id="bkash_x5F_number" transform="matrix(1 0 0 1 0 1133.5273)" x="50%" text-anchor="middle" class="st9 st10 st11">` +
+    number +
+    `</text>
 	</g>
 	<g style="clip-path:url(#SVGID_00000081624218962753939920000011583036221603482813_);">
 		<circle class="st8" cx="540" cy="817.1" r="113.1"/>
@@ -2533,6 +2536,24 @@ TkSuQmCC" transform="matrix(0.4408 0 0 0.4408 426.9416 704.8832)">
 	</g>
 	<g style="clip-path:url(#SVGID_00000081624218962753939920000011583036221603482813_);">
 		<defs>
+			<filter id="deepfry">
+				<feColorMatrix type="matrix" values="2 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+				<feComponentTransfer>
+					<feFuncR type="linear" slope="3" intercept="-0.5"/>
+					<feFuncG type="linear" slope="2" intercept="-0.2"/>
+				</feComponentTransfer>
+			</filter>
+			<filter id="grayscale">
+				<feColorMatrix type="saturate" values="0" />
+				<feComponentTransfer>
+					<feFuncR type="linear" slope="0.8" intercept="0.1"/>
+					<feFuncG type="linear" slope="0.8" intercept="0.1"/>
+					<feFuncB type="linear" slope="0.9" intercept="0.1"/>
+				</feComponentTransfer>
+			</filter>
+			<filter id="sepia">
+				<feColorMatrix type="matrix" values="0.393 0.769 0.189 0 0  0.349 0.686 0.168 0 0  0.272 0.534 0.131 0 0  0 0 0 1 0" />
+			</filter>
 			<path id="SVGID_00000025429021102295206320000017209739515259048120_" d="M-31.7,1431.4l296.5-33.6c20.9-2.4,39.7,12.6,42.1,33.5
 				l33.9,296.8c2.4,20.9-12.6,39.8-33.5,42.1l-296.8,33.6c-20.9,2.4-39.7-12.7-42.1-33.6l-33.6-296.8
 				C-67.7,1452.6-52.6,1433.8-31.7,1431.4z"/>
@@ -2541,14 +2562,20 @@ TkSuQmCC" transform="matrix(0.4408 0 0 0.4408 426.9416 704.8832)">
 			<use xlink:href="#SVGID_00000025429021102295206320000017209739515259048120_"  style="overflow:visible;"/>
 		</clipPath>
 		
-			<g transform="matrix(1 0 0 1 -7.629395e-06 0)" style="clip-path:url(#SVGID_00000078742572205852879540000009799918444293491903_);">
+		<g transform="matrix(1 0 0 1 -7.629395e-06 0)" style="clip-path:url(#SVGID_00000078742572205852879540000009799918444293491903_);">
 			
-            <image id="salami_img" style="overflow:visible;" width="95%" height="1000" x="0" y="0" xlink:href="` + image + `" transform="matrix(0.3978 -5.004062e-02 5.004062e-02 0.3978 -89.6246 1425.3505)">
+            <image id="salami_img" style="overflow:visible;` +
+    (vibeFilter && vibeFilter !== "none"
+      ? ` filter: url(#` + vibeFilter + `);`
+      : "") +
+    `" width="95%" height="1000" x="0" y="0" xlink:href="` +
+    image +
+    `" transform="matrix(0.3978 -5.004062e-02 5.004062e-02 0.3978 -89.6246 1425.3505)">
 			</image>
 		</g>
 	</g>
 </g>
 </svg>
-`
-	return svg
+`;
+  return svg;
 }
