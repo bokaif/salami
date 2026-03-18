@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,14 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <!-- Iconify -->
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     <link rel="stylesheet" href="style.css" />
 
-    <!-- Alertify -->
+    <!-- jsQR -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <!-- Alertify -->
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <link
@@ -33,12 +34,9 @@
 
   <body>
     <div class="site-wrapper">
-
-
       <main class="main-container">
         <div class="column-left">
           <section class="hero-section">
-            <div class="badge">EID EDITION</div>
             <h1 class="hero-title">
               bKashify<br /><span class="highlight">Salami.</span>
             </h1>
@@ -49,6 +47,26 @@
           </section>
 
           <div class="card-brutalist generator-panel">
+            <div class="form-row">
+              <label class="block-label">00 // SELECT TEMPLATE</label>
+              <div class="template-selector" id="template-selector">
+                <label class="template-card">
+                  <input type="radio" name="template" value="eid_dark" checked />
+                  <span class="template-card-inner">
+                    <iconify-icon icon="solar:moon-bold" style="font-size:1.3rem"></iconify-icon>
+                    <span>Eid Dark</span>
+                  </span>
+                </label>
+                <label class="template-card">
+                  <input type="radio" name="template" value="eid_light" />
+                  <span class="template-card-inner">
+                    <iconify-icon icon="solar:sun-bold" style="font-size:1.3rem"></iconify-icon>
+                    <span>Eid Light</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
             <div class="form-row">
               <label class="block-label">01 // TARGET NUMBER</label>
               <div class="input-wrapper">
@@ -99,6 +117,31 @@
                   <span class="upload-hint"
                     >Your most intimidating look.</span
                   >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="block-label">03 // UPLOAD QR <span class="label-optional">(OPTIONAL)</span></label>
+              <div
+                class="upload-zone upload-zone-sm"
+                id="qr-upload-zone"
+                onclick="document.getElementById('qr-input').click()"
+              >
+                <input
+                  type="file"
+                  id="qr-input"
+                  accept="image/*"
+                  onchange="handleQRSelect(event)"
+                  style="display: none"
+                />
+                <div class="upload-content" id="qr-label">
+                  <iconify-icon
+                    icon="solar:qr-code-bold"
+                    class="upload-icon-svg"
+                  ></iconify-icon>
+                  <strong>UPLOAD QR IMAGE</strong>
+                  <span class="upload-hint">We'll auto-detect &amp; crop the QR.</span>
                 </div>
               </div>
             </div>
@@ -257,34 +300,79 @@
     <script src="script.js"></script>
     <script>
       // ─── State ───────────────────────────────────────────────────────
-      let image = null; // final (possibly cropped) base64
-      let rawImageSrc = null; // original file base64 for cropper
+      let image = null;
+      let qrImage = null;
+      let rawImageSrc = null;
 
       // ─── Cropper state ────────────────────────────────────────────────
       const cropState = {
-        img: null, // HTMLImageElement of raw
+        img: null,
         zoom: 1,
-        panX: 0, // offset in canvas coords (px)
+        panX: 0,
         panY: 0,
-        canvasSize: 400, // internal render size
+        canvasSize: 400,
         isDragging: false,
         lastX: 0,
         lastY: 0,
       };
 
-      // ─── File input handler ───────────────────────────────────────────
+      // ─── Face file input handler ────────────────────────────────────────
       function handleFileSelect(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function (e) {
           rawImageSrc = e.target.result;
           openCropper(rawImageSrc);
         };
         reader.readAsDataURL(file);
-        // Reset input so same file can trigger again
         event.target.value = "";
+      }
+
+      // ─── QR file input handler ──────────────────────────────────────────
+      function handleQRSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          detectAndCropQR(e.target.result)
+            .then(function (croppedQR) {
+              qrImage = croppedQR;
+              const label = document.getElementById("qr-label");
+              label.innerHTML = "";
+              label.style.backgroundImage = "url(" + croppedQR + ")";
+              label.style.backgroundSize = "contain";
+              label.style.backgroundPosition = "center";
+              label.style.backgroundRepeat = "no-repeat";
+
+              var removeBtn = document.createElement("div");
+              removeBtn.className = "upload-change-hint";
+              removeBtn.title = "Remove QR";
+              removeBtn.innerHTML =
+                '<iconify-icon icon="solar:close-circle-bold"></iconify-icon>';
+              removeBtn.onclick = function (ev) {
+                ev.stopPropagation();
+                clearQR();
+              };
+              label.appendChild(removeBtn);
+              alertify.success("QR detected and cropped!");
+            })
+            .catch(function (err) {
+              alertify.error(err);
+            });
+        };
+        reader.readAsDataURL(file);
+        event.target.value = "";
+      }
+
+      function clearQR() {
+        qrImage = null;
+        var label = document.getElementById("qr-label");
+        label.style.backgroundImage = "";
+        label.innerHTML =
+          '<iconify-icon icon="solar:qr-code-bold" class="upload-icon-svg"></iconify-icon>' +
+          "<strong>UPLOAD QR IMAGE</strong>" +
+          '<span class="upload-hint">We\'ll auto-detect &amp; crop the QR.</span>';
       }
 
       // ─── Open cropper modal ────────────────────────────────────────────
@@ -292,7 +380,6 @@
         const overlay = document.getElementById("crop-overlay");
         overlay.classList.add("active");
         document.body.style.overflow = "hidden";
-
         const img = new Image();
         img.onload = function () {
           cropState.img = img;
@@ -307,20 +394,14 @@
         document.body.style.overflow = "";
       }
 
-      // ─── Reset pan/zoom to fit the image ──────────────────────────────
       function resetCropState() {
         const img = cropState.img;
         const cs = cropState.canvasSize;
-
-        // Find initial zoom so the whole image fills the square
         const minDim = Math.min(img.naturalWidth, img.naturalHeight);
         const initialZoom = cs / minDim;
-
         cropState.zoom = initialZoom;
-        // Center the image
         cropState.panX = (cs - img.naturalWidth * initialZoom) / 2;
         cropState.panY = (cs - img.naturalHeight * initialZoom) / 2;
-
         document.getElementById("zoom-slider").min = initialZoom;
         document.getElementById("zoom-slider").max = initialZoom * 4;
         document.getElementById("zoom-slider").step = initialZoom * 0.01;
@@ -335,22 +416,17 @@
           (cur / base).toFixed(1) + "x";
       }
 
-      // ─── Render the crop canvas ────────────────────────────────────────
       function renderCrop() {
         const cs = cropState.canvasSize;
         const canvas = document.getElementById("crop-canvas");
-        // Match canvas display size to viewport
         const vp = document.getElementById("crop-viewport");
         const vpSize = vp.clientWidth || 340;
         canvas.style.width = vpSize + "px";
         canvas.style.height = vpSize + "px";
         canvas.width = cs;
         canvas.height = cs;
-
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, cs, cs);
-
-        // Checkerboard background
         const sq = 20;
         for (let y = 0; y < cs; y += sq) {
           for (let x = 0; x < cs; x += sq) {
@@ -358,8 +434,6 @@
             ctx.fillRect(x, y, sq, sq);
           }
         }
-
-        // Draw image
         const img = cropState.img;
         ctx.drawImage(
           img,
@@ -376,7 +450,6 @@
         .addEventListener("input", function () {
           const newZoom = parseFloat(this.value);
           const cs = cropState.canvasSize;
-          // Zoom toward center
           const centerX = cs / 2;
           const centerY = cs / 2;
           const factor = newZoom / cropState.zoom;
@@ -388,7 +461,6 @@
           renderCrop();
         });
 
-      // ─── Reset button ─────────────────────────────────────────────────
       document
         .getElementById("crop-reset-btn")
         .addEventListener("click", function () {
@@ -448,7 +520,6 @@
           const vp = document.getElementById("crop-viewport");
           const rect = vp.getBoundingClientRect();
           const scale = cropState.canvasSize / rect.width;
-
           if (e.touches.length === 1 && cropState.isDragging) {
             cropState.panX += (e.touches[0].clientX - cropState.lastX) * scale;
             cropState.panY += (e.touches[0].clientY - cropState.lastY) * scale;
@@ -513,7 +584,6 @@
           const scale = cropState.canvasSize / rect.width;
           const cx = (e.clientX - rect.left) * scale;
           const cy = (e.clientY - rect.top) * scale;
-
           const newZoom = Math.max(
             parseFloat(slider.min),
             Math.min(parseFloat(slider.max), cropState.zoom * delta),
@@ -530,17 +600,14 @@
         { passive: false },
       );
 
-      // ─── Clamp pan so image always covers the viewport ─────────────────
       function clampPan() {
         const img = cropState.img;
         const cs = cropState.canvasSize;
         const iw = img.naturalWidth * cropState.zoom;
         const ih = img.naturalHeight * cropState.zoom;
-        // Left edge: panX cannot go more right than 0
         if (iw >= cs) {
           cropState.panX = Math.min(0, Math.max(cs - iw, cropState.panX));
         } else {
-          // Image smaller than cs (shouldn't happen with min zoom logic but safety)
           cropState.panX = Math.max(0, Math.min(cs - iw, cropState.panX));
         }
         if (ih >= cs) {
@@ -559,8 +626,6 @@
           canvas.width = cs;
           canvas.height = cs;
           renderCrop();
-
-          // Export from full-res canvas
           const exportSize = Math.min(1200, cs * 2);
           const exportCanvas = document.createElement("canvas");
           exportCanvas.width = exportSize;
@@ -574,17 +639,12 @@
             cropState.img.naturalWidth * cropState.zoom * scaleFactor,
             cropState.img.naturalHeight * cropState.zoom * scaleFactor,
           );
-
           image = exportCanvas.toDataURL("image/jpeg", 0.92);
-
-          // Update upload zone preview
           const label = document.getElementById("image-label");
           label.innerHTML = "";
           label.style.backgroundImage = "url(" + image + ")";
           label.style.backgroundSize = "cover";
           label.style.backgroundPosition = "center";
-
-          // Show "change" hint
           const changeHint = document.createElement("div");
           changeHint.className = "upload-change-hint";
           changeHint.title = "Adjust Crop";
@@ -596,7 +656,6 @@
             document.body.style.overflow = "hidden";
           };
           label.appendChild(changeHint);
-
           closeCropper();
           alertify.success("Image cropped. Looking good!");
         });
@@ -611,38 +670,11 @@
           if (e.target === this) closeCropper();
         });
 
-      // ─── SVG → PNG helpers ─────────────────────────────────────────────
-      function svgToPng(svg, callback) {
-        const url = getSvgUrl(svg);
-        svgUrlToPng(url, (imgData) => {
-          callback(imgData);
-          URL.revokeObjectURL(url);
-        });
-      }
-      function getSvgUrl(svg) {
-        return URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
-      }
-      function svgUrlToPng(svgUrl, callback) {
-        const svgImage = document.createElement("img");
-        svgImage.style.cssText = "position: absolute; left: -9999px;";
-        document.body.appendChild(svgImage);
-        svgImage.onload = function () {
-          const canvas = document.createElement("canvas");
-          const canvasCtx = canvas.getContext("2d");
-          canvas.width = svgImage.width;
-          canvas.height = svgImage.height;
-          canvasCtx.drawImage(svgImage, 0, 0);
-          const imgData = canvas.toDataURL("image/png");
-          callback(imgData);
-          document.body.removeChild(svgImage);
-        };
-        svgImage.src = svgUrl;
-      }
-
-      // ─── Main generate ─────────────────────────────────────────────────
-      function generate() {
-        let number = document.getElementById("number").value.replace(/\s+/g, "");
-        let vibeFilter = "none";
+      // ─── Main generate (async) ──────────────────────────────────────────
+      async function generate() {
+        var number = document.getElementById("number").value.replace(/\s+/g, "");
+        var templateId =
+          document.querySelector('input[name="template"]:checked').value;
 
         if (number === "" && image == null) {
           alertify.error("Fill all fields to generate");
@@ -657,28 +689,26 @@
           return;
         }
 
-        const generateBtn = document.getElementById("generate");
-        const originalHTML = generateBtn.innerHTML;
+        var generateBtn = document.getElementById("generate");
+        var originalHTML = generateBtn.innerHTML;
         generateBtn.innerHTML =
           '<iconify-icon icon="solar:loading-bold" style="animation:spin 1s linear infinite; font-size:1.4rem; margin-right:10px;"></iconify-icon>GENERATING...';
         generateBtn.style.pointerEvents = "none";
 
-        setTimeout(() => {
-          const svg = bkashify(number, image, vibeFilter);
-          svgToPng(svg, (imgData) => {
-            const storyImage = document.getElementById("story-image");
-            const placeholder = document.getElementById("placeholder-text");
-
+        try {
+          var svg = await bkashify(templateId, number, image, qrImage);
+          svgToPng(svg, function (imgData) {
+            var storyImage = document.getElementById("story-image");
+            var placeholder = document.getElementById("placeholder-text");
             storyImage.src = imgData;
             storyImage.style.opacity = "1";
             if (placeholder) placeholder.style.display = "none";
-
             alertify.success("Card Generated. Go extort!");
-
             if (window.innerWidth <= 900) {
-              document.querySelector(".column-right").classList.remove("mobile-hidden");
-              // Allow browser to render display:block before scrolling
-              setTimeout(() => {
+              document
+                .querySelector(".column-right")
+                .classList.remove("mobile-hidden");
+              setTimeout(function () {
                 document
                   .getElementById("story")
                   .scrollIntoView({ behavior: "smooth", block: "start" });
@@ -687,7 +717,11 @@
             generateBtn.innerHTML = originalHTML;
             generateBtn.style.pointerEvents = "auto";
           });
-        }, 50);
+        } catch (err) {
+          alertify.error("Generation failed: " + err);
+          generateBtn.innerHTML = originalHTML;
+          generateBtn.style.pointerEvents = "auto";
+        }
       }
 
       // ─── Download ──────────────────────────────────────────────────────
@@ -708,17 +742,16 @@
         .getElementById("easter-egg")
         .addEventListener("click", function () {
           alertify.message("(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
-          const storyImage = document.querySelector("#story-image");
-          const placeholder = document.getElementById("placeholder-text");
-
-          storyImage.src = "dumbestbeing.png";
+          var storyImage = document.querySelector("#story-image");
+          var placeholder = document.getElementById("placeholder-text");
+          storyImage.src = "dumbestbeing.webp";
           storyImage.style.opacity = "1";
           if (placeholder) placeholder.style.display = "none";
-
           if (window.innerWidth <= 900) {
-            document.querySelector(".column-right").classList.remove("mobile-hidden");
-            // Allow browser to render display:block before scrolling
-            setTimeout(() => {
+            document
+              .querySelector(".column-right")
+              .classList.remove("mobile-hidden");
+            setTimeout(function () {
               document
                 .getElementById("story")
                 .scrollIntoView({ behavior: "smooth", block: "start" });
