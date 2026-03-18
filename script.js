@@ -122,9 +122,8 @@ function getSvgUrl(svg) {
 }
 
 function svgUrlToPng(svgUrl, callback) {
-  var svgImage = document.createElement("img");
-  svgImage.style.cssText = "position: absolute; left: -9999px;";
-  document.body.appendChild(svgImage);
+  var svgImage = new Image();
+  svgImage.decoding = "async";
   svgImage.onload = function () {
     var canvas = document.createElement("canvas");
     canvas.width = 1080;
@@ -133,7 +132,9 @@ function svgUrlToPng(svgUrl, callback) {
     ctx.drawImage(svgImage, 0, 0, 1080, 1920);
     var imgData = canvas.toDataURL("image/png");
     callback(imgData);
-    document.body.removeChild(svgImage);
+  };
+  svgImage.onerror = function () {
+    throw new Error("Failed to render SVG template.");
   };
   svgImage.src = svgUrl;
 }
