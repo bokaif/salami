@@ -40,8 +40,8 @@
     --bg: #050507;
     --bg-subtle: #0c0c12;
     --surface: #101018;
-    --surface-alt: #151520;
-    --surface-hover: #1b1b28;
+    --surface-alt: #17171f;
+    --surface-hover: #17171f;
     --text: #f6f7ff;
     --text-secondary: #b5bdd5;
     --text-muted: #7d88a8;
@@ -82,6 +82,10 @@ body {
     overflow-x: hidden;
     background-attachment: fixed;
     transition: background-color 0.35s ease, color 0.35s ease;
+    /* vertical centering host */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 body::before {
@@ -115,9 +119,10 @@ body::after {
 
 .site-wrapper {
     width: 100%;
-    min-height: 100vh;
+    flex: 1;                  /* stretch to fill the body flex column */
     display: flex;
     flex-direction: column;
+    justify-content: center;  /* vertically centre .main-container */
     position: relative;
     z-index: 1;
 }
@@ -147,19 +152,19 @@ body::after {
 /* ── Main Layout ─────────────────────────────────────── */
 .main-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.86fr);
-    gap: clamp(22px, 3vw, 34px);
-    padding: clamp(20px, 4vw, 48px) 20px 24px;
-    max-width: 1280px;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+    gap: clamp(20px, 2.5vw, 30px);
+    padding: clamp(16px, 3vw, 36px) 20px 20px;
+    max-width: 960px;          /* tighter width keeps columns from diverging */
     margin: 0 auto;
     width: 100%;
-    align-items: stretch;
+    align-items: stretch;      /* both columns same height */
 }
 
 .column-left {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 2em;
     min-width: 0;
 }
 
@@ -169,49 +174,282 @@ body::after {
     min-width: 0;
     position: sticky;
     top: 24px;
-    align-self: start;
+    align-self: stretch;  /* fill the full row height */
 }
 
 @media (max-width: 900px) {
     .main-container {
-        grid-template-columns: 1fr;
-        padding: 18px 16px 20px;
-        gap: 20px;
+        grid-template-columns: 1fr !important;
+        padding: 40px 20px 24px !important;
+        gap: 16px !important;
     }
 
     .column-right {
-        position: relative;
-        top: 0;
-        min-height: auto;
+        position: relative !important;
+        top: 0 !important;
+        min-height: auto !important;
     }
 
     .column-right.mobile-hidden {
         display: none !important;
     }
+
+    .hero-section {
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        padding-top: 1rem !important;
+    }
 }
 
 @media (max-width: 640px) {
     .hero-title {
-        font-size: clamp(2.8rem, 16vw, 4.2rem);
+        font-size: clamp(2.7rem, 15vw, 4rem) !important;
+        margin-bottom: 10px !important;
+    }
+
+    .hero-subtitle {
+        font-size: 0.92rem !important;
+        padding-bottom: 14px !important;
+        line-height: 1.5 !important;
+    }
+
+    .card-brutalist {
+        padding: 28px 28px !important;
+        border-radius: var(--radius-lg) !important;
     }
 
     .template-selector {
-        flex-direction: column;
+        flex-direction: row !important;
+        gap: 10px !important;
+    }
+
+    .template-card-inner {
+        padding: 12px 12px !important;
+        font-size: 0.85rem !important;
+        gap: 8px !important;
+    }
+
+    .template-card-inner iconify-icon {
+        font-size: 1rem !important;
+    }
+
+    .form-row {
+        margin-bottom: 14px !important;
+    }
+
+    .block-label {
+        font-size: 0.84rem !important;
+        margin-bottom: 8px !important;
     }
 
     .input-wrapper {
-        flex-direction: column;
-        height: auto;
+        height: 50px !important;
     }
 
     .prefix {
-        padding: 12px 14px;
-        border-right: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+        padding: 0 14px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .bkash-logo {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    .prefix-wordmark {
+        display: none !important;
     }
 
     .input-wrapper input {
-        min-height: 54px;
+        font-size: 1rem !important;
+        padding: 0 14px !important;
+    }
+
+    /* Compact upload zones */
+    .upload-zone {
+        height: 120px !important;
+    }
+
+    .upload-zone-sm {
+        height: 120px !important;
+    }
+
+    .upload-icon-svg {
+        font-size: 1.5rem !important;
+    }
+
+    .upload-content strong {
+        font-size: 0.9rem !important;
+    }
+
+    .upload-content {
+        gap: 6px !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        padding: 12px !important;
+    }
+
+    /* Show hint only when no image loaded — hide by default */
+    .upload-hint {
+        font-size: 0.75rem !important;
+        display: block !important;
+    }
+
+    .btn-brutalist {
+        height: 50px !important;
+        font-size: 1rem !important;
+    }
+
+    .btn-brutalist.action-generate {
+        margin-top: 10px !important;
+    }
+
+    .disclaimer-text {
+        margin-top: 8px !important;
+        font-size: 0.75rem !important;
+    }
+
+    .result-header {
+        margin-bottom: 14px !important;
+        padding-bottom: 10px !important;
+    }
+
+    .result-header h2 {
+        font-size: 1rem !important;
+    }
+
+    .result-image-wrapper {
+        aspect-ratio: 9 / 16 !important;
+        flex: 0 0 auto !important;
+        min-height: unset !important;
+        margin-bottom: 14px !important;
+    }
+
+    .btn-brutalist.btn-secondary {
+        height: 50px !important;
+        font-size: 1rem !important;
+    }
+
+    .site-footer {
+        padding: 18px 12px 20px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .footer-content {
+        gap: 10px !important;
+    }
+
+    .footer-link {
+        padding: 4px 12px !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .main-container {
+        padding: 24px 16px 20px !important;
+        gap: 14px !important;
+    }
+
+    .hero-title {
+        font-size: clamp(2.4rem, 14vw, 3.4rem) !important;
+        letter-spacing: -1px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .hero-subtitle {
+        font-size: 0.86rem !important;
+        padding-bottom: 12px !important;
+        line-height: 1.45 !important;
+    }
+
+    .card-brutalist {
+        padding: 22px 22px !important;
+    }
+
+    .form-row {
+        margin-bottom: 12px !important;
+    }
+
+    .block-label {
+        font-size: 0.8rem !important;
+        margin-bottom: 7px !important;
+    }
+
+    .template-card-inner {
+        padding: 11px 10px !important;
+        font-size: 0.82rem !important;
+    }
+
+    .input-wrapper {
+        height: 48px !important;
+    }
+
+    .input-wrapper input {
+        font-size: 0.95rem !important;
+    }
+
+    .upload-zone {
+        height: 108px !important;
+    }
+
+    .upload-zone-sm {
+        height: 108px !important;
+    }
+
+    .upload-icon-svg {
+        font-size: 1.35rem !important;
+    }
+
+    .upload-content strong {
+        font-size: 0.85rem !important;
+    }
+
+    .upload-content {
+        gap: 5px !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        padding: 10px !important;
+    }
+
+    .btn-brutalist {
+        height: 48px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .btn-brutalist.action-generate {
+        margin-top: 10px !important;
+    }
+
+    .disclaimer-text {
+        margin-top: 8px !important;
+        font-size: 0.72rem !important;
+    }
+
+    .crop-modal {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .crop-modal-header h3 {
+        font-size: 0.9rem;
+    }
+
+    .zoom-control {
+        padding: 6px 8px;
+    }
+
+    .btn-crop-reset {
+        height: 34px;
+        font-size: 0.7rem;
+        padding: 0 8px;
+    }
+
+    .btn-crop-cancel,
+    .btn-crop-confirm {
+        height: 42px;
+        font-size: 0.83rem;
     }
 }
 
@@ -219,7 +457,7 @@ body::after {
 .hero-section {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .badge {
@@ -239,16 +477,21 @@ body::after {
 
 .hero-title {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 9vw, 5.5rem);
+    font-size: clamp(3rem, 8vw, 4.5rem);
     font-weight: 800;
     line-height: 0.9;
-    margin-bottom: 18px;
+    margin-bottom: 0;
     letter-spacing: -2px;
     color: var(--text);
+    text-align: center;
 }
 
 .hero-title .highlight {
     color: var(--primary);
+}
+
+.hero-title .light {
+    font-weight: 400;
 }
 
 .hero-subtitle {
@@ -273,9 +516,10 @@ body::after {
 }
 
 .generator-panel {
-    flex: 1;
+    flex: 1;                       /* grow to fill left-column height */
     display: flex;
     flex-direction: column;
+    justify-content: space-between; /* spread rows so no dead block at bottom */
 }
 
 /* ── Form Rows ────────────────────────────────────────── */
@@ -296,7 +540,7 @@ body::after {
 .input-wrapper {
     display: flex;
     border: 1px solid var(--border-strong);
-    height: 58px;
+    height: 54px;
     background: var(--input-bg);
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -305,6 +549,11 @@ body::after {
 }
 
 .input-wrapper:focus-within {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+}
+
+.input-wrapper:hover {
     border-color: var(--primary);
     box-shadow: var(--shadow-md);
 }
@@ -348,7 +597,7 @@ body::after {
     padding: 0 15px;
     outline: none;
     width: 100%;
-    background: transparent;
+    background: var(--surface-alt);
     color: var(--text);
     font-weight: 700;
 }
@@ -361,7 +610,7 @@ body::after {
 /* ── Upload Zone ──────────────────────────────────────── */
 .upload-zone {
     border: 2px dashed var(--border-strong);
-    height: 186px;
+    height: 132px;
     width: 100%;
     position: relative;
     cursor: pointer;
@@ -472,7 +721,7 @@ body::after {
     gap: 8px;
     padding: 14px 16px;
     border-radius: var(--radius-md);
-    border: 2px solid var(--border-strong);
+    border: 1px solid var(--border-strong);
     background: var(--surface-alt);
     font-family: var(--font-display);
     font-weight: 700;
@@ -516,7 +765,7 @@ body::after {
 /* ── Buttons ──────────────────────────────────────────── */
 .btn-brutalist {
     width: 100%;
-    height: 58px;
+    height: 54px;
     border: none;
     font-family: var(--font-display);
     font-weight: 800;
@@ -572,6 +821,7 @@ body::after {
     background: var(--surface);
     display: flex;
     flex-direction: column;
+    flex: 1;       /* fill the full right-column height */
     min-height: 0;
 }
 
@@ -595,7 +845,7 @@ body::after {
 .status-dot {
     width: 14px;
     height: 14px;
-    background: #00e676;
+    background: var(--primary);
     border: 2px solid var(--border-strong);
     border-radius: 50%;
     animation: pulse 2s infinite;
@@ -611,13 +861,15 @@ body::after {
     border: 1px solid var(--border);
     margin-bottom: 18px;
     position: relative;
-    aspect-ratio: 9 / 16;
+    aspect-ratio: 9 / 14;   /* slightly less tall so right card matches left column height */
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     border-radius: var(--radius-lg);
+    flex: 1;                /* let it grow to fill available vertical space */
+    min-height: 0;
 }
 
 .placeholder-text {
@@ -659,7 +911,6 @@ body::after {
     position: relative;
     z-index: 10;
     font-family: var(--font-display);
-    margin-top: auto;
     font-size: 0.95rem;
     color: var(--text);
 }
@@ -702,7 +953,7 @@ body::after {
 
 #easter-egg {
     cursor: pointer;
-    color: var(--primary);
+    color: white;
     border-bottom: 2px dashed var(--primary);
     transition: all 0.2s ease;
     display: inline-flex;
@@ -738,11 +989,11 @@ body::after {
 }
 
 .ajs-message.ajs-error {
-    background: #1a1a2e !important;
-    color: white !important;
+    background: var(--surface-hover) !important;
+    color: var(--text) !important;
     font-family: var(--font-body) !important;
     font-weight: bold !important;
-    border: 1px solid var(--primary) !important;
+    border: 1px dashed var(--primary) !important;
     box-shadow: var(--shadow-lg) !important;
     border-radius: var(--radius-md) !important;
     text-shadow: none !important;
@@ -874,18 +1125,8 @@ body::after {
 .grid-line.v2 { width: 1px; height: 100%; left: 66.66%; }
 
 .crop-corner {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-color: white;
-    border-style: solid;
-    border-width: 0;
+    display: none;
 }
-
-.crop-corner.tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
-.crop-corner.tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
-.crop-corner.bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; }
-.crop-corner.br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; }
 
 /* ── Zoom Controls ────────────────────────────────────── */
 .crop-controls {
@@ -948,38 +1189,42 @@ body::after {
     font-family: var(--font-body);
     font-size: 0.78rem;
     font-weight: 700;
-    min-width: 36px;
     text-align: right;
     color: var(--text);
 }
 
-.btn-crop-reset {
+/* ── Rotate Controls ─────────────────────────────────── */
+.rotate-controls {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.btn-rotate {
     background: var(--surface);
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-sm);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.8rem;
     cursor: pointer;
-    padding: 0 14px;
+    width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
-    gap: 5px;
-    text-transform: uppercase;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text);
     transition: all 0.15s ease;
     flex-shrink: 0;
-    color: var(--text);
 }
 
-.btn-crop-reset:hover {
+.btn-rotate:hover {
     background: var(--surface-hover);
     box-shadow: var(--shadow-md);
+    transform: scale(1.05);
 }
 
-.btn-crop-reset:active {
-    transform: scale(0.97);
+.btn-rotate:active {
+    transform: scale(0.93);
 }
 
 /* ── Crop Action Buttons ──────────────────────────────── */
@@ -1015,20 +1260,43 @@ body::after {
     margin-top: 0 !important;
 }
 
-/* ── Mobile ───────────────────────────────────────────── */
+/* ── Mobile Crop Modal ────────────────────────────────── */
 @media (max-width: 520px) {
+    .crop-overlay {
+        padding: 12px;
+    }
+
     .crop-modal {
-        padding: 20px;
-        gap: 16px;
+        padding: 18px;
+        gap: 14px;
+    }
+
+    /* Fix: allow zoom row to wrap so rotate buttons never clip out */
+    .crop-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .zoom-control {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .btn-rotate {
+        width: 36px;
+        height: 36px;
+        font-size: 1.05rem;
     }
 
     .crop-actions {
         flex-direction: column;
+        gap: 8px;
     }
 
     .btn-crop-cancel,
     .btn-crop-confirm {
         width: 100%;
         flex: unset;
+        height: 48px;
     }
 }

@@ -2,13 +2,13 @@
 const TEMPLATES = [
   {
     id: "eid_dark",
-    name: "Eid Dark",
+    name: "Dark",
     qr: "templates/qr-dark.svg",
     noqr: "templates/no-qr-dark.svg",
   },
   {
     id: "eid_light",
-    name: "Eid Light",
+    name: "Light",
     qr: "templates/qr-light.svg",
     noqr: "templates/no-qr-light.svg",
   },

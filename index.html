@@ -29,7 +29,7 @@
       property="og:description"
       content="Generate your bespoke Salami request card."
     />
-    <meta property="og:image" content="https://bokaif.me/salami/og.png" />
+    <meta property="og:image" content="https://bokaif.github.io/salami/og.webp" />
   </head>
 
   <body>
@@ -38,12 +38,12 @@
         <div class="column-left">
           <section class="hero-section">
             <h1 class="hero-title">
-              bKashify<br /><span class="highlight">Salami.</span>
+              <span class="highlight light">b</span><span class="light">Kashify</span><br /><span class="light">Salami</span>
             </h1>
-            <p class="hero-subtitle">
+            <!-- <p class="hero-subtitle">
               Stop hinting. Start asking. <br />
               Generate your bespoke story card.
-            </p>
+            </p> -->
           </section>
 
           <div class="card-brutalist generator-panel">
@@ -54,14 +54,14 @@
                   <input type="radio" name="template" value="eid_dark" checked />
                   <span class="template-card-inner">
                     <iconify-icon icon="solar:moon-bold" style="font-size:1.3rem"></iconify-icon>
-                    <span>Eid Dark</span>
+                    <span>Dark</span>
                   </span>
                 </label>
                 <label class="template-card">
                   <input type="radio" name="template" value="eid_light" />
                   <span class="template-card-inner">
                     <iconify-icon icon="solar:sun-bold" style="font-size:1.3rem"></iconify-icon>
-                    <span>Eid Light</span>
+                    <span>Light</span>
                   </span>
                 </label>
               </div>
@@ -141,7 +141,7 @@
                     class="upload-icon-svg"
                   ></iconify-icon>
                   <strong>UPLOAD QR IMAGE</strong>
-                  <span class="upload-hint">We'll auto-detect &amp; crop the QR.</span>
+                  <span class="upload-hint">Auto-detects &amp; crops the QR.</span>
                 </div>
               </div>
             </div>
@@ -157,7 +157,7 @@
               ></iconify-icon>
               GENERATE
             </button>
-            <div class="disclaimer-text">Prepare for extortion.</div>
+            <!-- <div class="disclaimer-text">Prepare for extortion.</div> -->
           </div>
         </div>
 
@@ -273,10 +273,14 @@
             ></iconify-icon>
             <span class="zoom-value" id="zoom-value">1.0x</span>
           </div>
-          <button class="btn-crop-reset" id="crop-reset-btn">
-            <iconify-icon icon="solar:restart-bold"></iconify-icon>
-            RESET
-          </button>
+          <div class="rotate-controls">
+            <button class="btn-rotate" id="rotate-left-btn" title="Rotate left">
+              <iconify-icon icon="vaadin:rotate-left"></iconify-icon>
+            </button>
+            <button class="btn-rotate" id="rotate-right-btn" title="Rotate right">
+              <iconify-icon icon="vaadin:rotate-right"></iconify-icon>
+            </button>
+          </div>
         </div>
 
         <div class="crop-actions">
@@ -310,6 +314,7 @@
         zoom: 1,
         panX: 0,
         panY: 0,
+        rotation: 0,       // degrees: 0 | 90 | 180 | 270
         canvasSize: 400,
         isDragging: false,
         lastX: 0,
@@ -380,6 +385,7 @@
         const overlay = document.getElementById("crop-overlay");
         overlay.classList.add("active");
         document.body.style.overflow = "hidden";
+        cropState.rotation = 0; // reset rotation for each new image
         const img = new Image();
         img.onload = function () {
           cropState.img = img;
@@ -397,11 +403,16 @@
       function resetCropState() {
         const img = cropState.img;
         const cs = cropState.canvasSize;
-        const minDim = Math.min(img.naturalWidth, img.naturalHeight);
+        const rot = cropState.rotation;
+        // When rotated 90/270 the image natural dims swap
+        const isSwapped = rot === 90 || rot === 270;
+        const srcW = isSwapped ? img.naturalHeight : img.naturalWidth;
+        const srcH = isSwapped ? img.naturalWidth  : img.naturalHeight;
+        const minDim = Math.min(srcW, srcH);
         const initialZoom = cs / minDim;
         cropState.zoom = initialZoom;
-        cropState.panX = (cs - img.naturalWidth * initialZoom) / 2;
-        cropState.panY = (cs - img.naturalHeight * initialZoom) / 2;
+        cropState.panX = (cs - srcW * initialZoom) / 2;
+        cropState.panY = (cs - srcH * initialZoom) / 2;
         document.getElementById("zoom-slider").min = initialZoom;
         document.getElementById("zoom-slider").max = initialZoom * 4;
         document.getElementById("zoom-slider").step = initialZoom * 0.01;
@@ -427,6 +438,7 @@
         canvas.height = cs;
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, cs, cs);
+        // checkerboard
         const sq = 20;
         for (let y = 0; y < cs; y += sq) {
           for (let x = 0; x < cs; x += sq) {
@@ -435,13 +447,27 @@
           }
         }
         const img = cropState.img;
+        const rot = cropState.rotation;
+        const rad = (rot * Math.PI) / 180;
+        // Determine rendered dims after rotation
+        const isSwapped = rot === 90 || rot === 270;
+        const drawnW = isSwapped
+          ? img.naturalHeight * cropState.zoom
+          : img.naturalWidth  * cropState.zoom;
+        const drawnH = isSwapped
+          ? img.naturalWidth  * cropState.zoom
+          : img.naturalHeight * cropState.zoom;
+        ctx.save();
+        ctx.translate(cropState.panX + drawnW / 2, cropState.panY + drawnH / 2);
+        ctx.rotate(rad);
         ctx.drawImage(
           img,
-          cropState.panX,
-          cropState.panY,
-          img.naturalWidth * cropState.zoom,
+          -img.naturalWidth  * cropState.zoom / 2,
+          -img.naturalHeight * cropState.zoom / 2,
+          img.naturalWidth  * cropState.zoom,
           img.naturalHeight * cropState.zoom,
         );
+        ctx.restore();
       }
 
       // ─── Zoom slider ──────────────────────────────────────────────────
@@ -461,13 +487,21 @@
           renderCrop();
         });
 
+      // ─── Rotate buttons ───────────────────────────────────────────────
+      function rotateBy(deg) {
+        cropState.rotation = ((cropState.rotation + deg) % 360 + 360) % 360;
+        resetCropState();
+        document.getElementById("zoom-slider").value = cropState.zoom;
+        renderCrop();
+      }
+
       document
-        .getElementById("crop-reset-btn")
-        .addEventListener("click", function () {
-          resetCropState();
-          document.getElementById("zoom-slider").value = cropState.zoom;
-          renderCrop();
-        });
+        .getElementById("rotate-left-btn")
+        .addEventListener("click", function () { rotateBy(-90); });
+
+      document
+        .getElementById("rotate-right-btn")
+        .addEventListener("click", function () { rotateBy(90); });
 
       // ─── Pan: Mouse ────────────────────────────────────────────────────
       const cropCanvas = document.getElementById("crop-canvas");
@@ -632,13 +666,22 @@
           exportCanvas.height = exportSize;
           const ectx = exportCanvas.getContext("2d");
           const scaleFactor = exportSize / cs;
+          const rot = cropState.rotation;
+          const rad = (rot * Math.PI) / 180;
+          const isSwapped = rot === 90 || rot === 270;
+          const drawnW = (isSwapped ? cropState.img.naturalHeight : cropState.img.naturalWidth)  * cropState.zoom * scaleFactor;
+          const drawnH = (isSwapped ? cropState.img.naturalWidth  : cropState.img.naturalHeight) * cropState.zoom * scaleFactor;
+          ectx.save();
+          ectx.translate(cropState.panX * scaleFactor + drawnW / 2, cropState.panY * scaleFactor + drawnH / 2);
+          ectx.rotate(rad);
           ectx.drawImage(
             cropState.img,
-            cropState.panX * scaleFactor,
-            cropState.panY * scaleFactor,
-            cropState.img.naturalWidth * cropState.zoom * scaleFactor,
+            -cropState.img.naturalWidth  * cropState.zoom * scaleFactor / 2,
+            -cropState.img.naturalHeight * cropState.zoom * scaleFactor / 2,
+            cropState.img.naturalWidth  * cropState.zoom * scaleFactor,
             cropState.img.naturalHeight * cropState.zoom * scaleFactor,
           );
+          ectx.restore();
           image = exportCanvas.toDataURL("image/jpeg", 0.92);
           const label = document.getElementById("image-label");
           label.innerHTML = "";
