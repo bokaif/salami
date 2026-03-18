@@ -307,6 +307,7 @@
       let image = null;
       let qrImage = null;
       let rawImageSrc = null;
+      let faceObjectUrl = null;
 
       // ─── Cropper state ────────────────────────────────────────────────
       const cropState = {
@@ -325,12 +326,20 @@
       function handleFileSelect(event) {
         const file = event.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          rawImageSrc = e.target.result;
+
+        try {
+          if (faceObjectUrl) URL.revokeObjectURL(faceObjectUrl);
+          faceObjectUrl = URL.createObjectURL(file);
+          rawImageSrc = faceObjectUrl;
           openCropper(rawImageSrc);
-        };
-        reader.readAsDataURL(file);
+        } catch (err) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            rawImageSrc = e.target.result;
+            openCropper(rawImageSrc);
+          };
+          reader.readAsDataURL(file);
+        }
         event.target.value = "";
       }
 
@@ -388,9 +397,16 @@
         cropState.rotation = 0; // reset rotation for each new image
         const img = new Image();
         img.onload = function () {
-          cropState.img = img;
-          resetCropState();
-          renderCrop();
+          const finalize = function () {
+            cropState.img = img;
+            resetCropState();
+            renderCrop();
+          };
+          if (typeof img.decode === "function") {
+            img.decode().then(finalize).catch(finalize);
+          } else {
+            finalize();
+          }
         };
         img.src = src;
       }
@@ -398,6 +414,10 @@
       function closeCropper() {
         document.getElementById("crop-overlay").classList.remove("active");
         document.body.style.overflow = "";
+        if (faceObjectUrl) {
+          URL.revokeObjectURL(faceObjectUrl);
+          faceObjectUrl = null;
+        }
       }
 
       function resetCropState() {

@@ -1089,6 +1089,9 @@ body::after {
     box-shadow: var(--shadow-sm);
     background: #e8e8e8;
     cursor: grab;
+    overscroll-behavior: contain;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .crop-viewport:active {
